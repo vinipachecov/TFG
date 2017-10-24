@@ -10,38 +10,38 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.utils import shuffle
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
 
-
-dataframe = pd.read_csv('/home/vinicius/Repos/TFG/data.csv')
-X = dataframe.iloc[:, 2:-1].values
-
-# 
-Y = dataframe.iloc[:, 1].values
-Y = np.matrix(dataframe.iloc[:, 1].values)
-
-
-# Encoding categorical data
-#Maligo = 1  | Benigno = 0
-for i in range(Y.shape[1]):
-    if Y[0,i] == 'M':
-        Y[0,i] = 1
+#encoding the y-label
+def M_B_0_1(label):
+    if label == 'M':
+        return 1
     else:
-        Y[0,i] = 0
-Y = np.float64(Y)        
+        return 0
 
 
-# normalization
-for i in range(X.shape[1]):
-    X[:,i] = (X[:,i] - X[:,i].mean()) / X[:,i].std()
+cancer_data = pd.read_csv('data.csv')
+cancer_data['diagnosis'] = cancer_data['diagnosis'].apply(M_B_0_1)
 
-    
 
-Y = Y.reshape(Y.shape[1],Y.shape[0])
+cols_normalizar = ['radius_mean', 'texture_mean', 'perimeter_mean',
+       'area_mean', 'smoothness_mean', 'compactness_mean', 'concavity_mean',
+       'concave_points_mean', 'symmetry_mean', 'fractal_dimension_mean',
+       'radius_se', 'texture_se', 'perimeter_se', 'area_se', 'smoothness_se',
+       'compactness_se', 'concavity_se', 'concave_points_se', 'symmetry_se',
+       'fractal_dimension_se', 'radius_worst', 'texture_worst',
+       'perimeter_worst', 'area_worst', 'smoothness_worst',
+       'compactness_worst', 'concavity_worst', 'concave_points_worst',
+       'symmetry_worst', 'fractal_dimension_worst']
 
-# Splitting the dataset into the Training set and Test set
-from sklearn.cross_validation import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = 0.25, random_state = 0)
+cancer_data[cols_normalizar] = cancer_data[cols_normalizar].apply(lambda x: (x - np.mean(x)) / (np.std(x)  ) )
 
+labels_to_drop = ['id','diagnosis']
+x_data = cancer_data.drop(labels=labels_to_drop,axis=1)
+y_data = cancer_data['diagnosis']
+
+X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.3, random_state=101)
 # Feature Scaling
 from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
@@ -56,31 +56,32 @@ classifier.fit(X_train, y_train)
 # Predicting the Test set results
 y_pred = classifier.predict(X_test)
 
+
 # Making the Confusion Matrix
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred)
 
-# Visualising the Training set results
-from matplotlib.colors import ListedColormap
+#results
+print(classification_report(y_test,y_pred=y_pred))
 
 
+#printing the values
 
-X_set, y_set = X_train[:,:2], y_train
+#creating a space
+add_values = np.linspace(0,3,171)
 
-#X1, X2 = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
-#                     np.arange(start = X_set[:, 1].min() - 1, stop = X_set[:, 1].max() + 1, step = 0.01),
+#adding some values because of the binary values
+y_values = y_pred + add_values
 
-X1, X2 = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
-                     np.arange(start = X_set[:, 1].min() - 1, stop = X_set[:, 1].max() + 1, step = 0.01))
-plt.contourf(X1, X2, classifier.predict(np.array([X1.ravel(), X2.ravel()]).T).reshape(X1.shape),
-             alpha = 0.75, cmap = ListedColormap(('red', 'green')))
-plt.xlim(X1.min(), X1.max())
-plt.ylim(X2.min(), X2.max())
-for i, j in enumerate(np.unique(y_set)):
-    plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],
-                c = ListedColormap(('red', 'green'))(i), label = j)
-plt.title('SVM (Training set)')
-plt.xlabel('Age')
-plt.ylabel('Estimated Salary')
-plt.legend()
+plt.figure(1)
+# print only the normal data
+plt.scatter(x=X_test[:,0] + add_values, y=y_test +add_values)
+
+#predicted values
+y_predt = y_pred + add_values
+
+plt.plot(X_test[:,0] + add_values, y_test +add_values, 'ro', 
+         X_test[:,0] + add_values, y_predt, 'mo')
+
 plt.show()
+#importing colormap
