@@ -1,0 +1,23 @@
+To-do
+
+	* Mais plots 
+		Maligno e Benigno
+		Usar em função das features também
+
+	* ver função de significância do R
+
+	
+
+	Porque separar malignos e benignos em função dos indices. Para garantir que estamos comparando as mesmas amostras e identifcar onde pode ter havido erro.
+
+	Pegar todo y_test 
+	
+
+
+	id1 -> linspace1
+
+	id2 -> linspace2
+
+	malignos - valor de identificação1
+
+	benignos - valor de identificação2

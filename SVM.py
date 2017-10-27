@@ -21,21 +21,21 @@ def M_B_0_1(label):
         return 0
 
 
-cancer_data = pd.read_csv('data.csv')
-cancer_data['diagnosis'] = cancer_data['diagnosis'].apply(M_B_0_1)
+	cancer_data = pd.read_csv('data.csv')
+	cancer_data['diagnosis'] = cancer_data['diagnosis'].apply(M_B_0_1)
 
 
-cols_normalizar = ['radius_mean', 'texture_mean', 'perimeter_mean',
-       'area_mean', 'smoothness_mean', 'compactness_mean', 'concavity_mean',
-       'concave_points_mean', 'symmetry_mean', 'fractal_dimension_mean',
-       'radius_se', 'texture_se', 'perimeter_se', 'area_se', 'smoothness_se',
-       'compactness_se', 'concavity_se', 'concave_points_se', 'symmetry_se',
-       'fractal_dimension_se', 'radius_worst', 'texture_worst',
-       'perimeter_worst', 'area_worst', 'smoothness_worst',
-       'compactness_worst', 'concavity_worst', 'concave_points_worst',
-       'symmetry_worst', 'fractal_dimension_worst']
+	cols_normalizar = ['radius_mean', 'texture_mean', 'perimeter_mean',
+	       'area_mean', 'smoothness_mean', 'compactness_mean', 'concavity_mean',
+	       'concave_points_mean', 'symmetry_mean', 'fractal_dimension_mean',
+	       'radius_se', 'texture_se', 'perimeter_se', 'area_se', 'smoothness_se',
+	       'compactness_se', 'concavity_se', 'concave_points_se', 'symmetry_se',
+	       'fractal_dimension_se', 'radius_worst', 'texture_worst',
+	       'perimeter_worst', 'area_worst', 'smoothness_worst',
+	       'compactness_worst', 'concavity_worst', 'concave_points_worst',
+	       'symmetry_worst', 'fractal_dimension_worst']
 
-cancer_data[cols_normalizar] = cancer_data[cols_normalizar].apply(lambda x: (x - np.mean(x)) / (np.std(x)  ) )
+	cancer_data[cols_normalizar] = cancer_data[cols_normalizar].apply(lambda x: (x - np.mean(x)) / (np.std(x)  ) )
 
 labels_to_drop = ['id','diagnosis']
 x_data = cancer_data.drop(labels=labels_to_drop,axis=1)
@@ -59,6 +59,7 @@ y_pred = classifier.predict(X_test)
 
 # Making the Confusion Matrix
 from sklearn.metrics import confusion_matrix
+from matplotlib.legend_handler import HandlerLine2D
 cm = confusion_matrix(y_test, y_pred)
 
 #results
@@ -68,20 +69,49 @@ print(classification_report(y_test,y_pred=y_pred))
 #printing the values
 
 #creating a space
-add_values = np.linspace(0,3,171)
+add_values = np.linspace(0,1,171)
 
 #adding some values because of the binary values
 y_values = y_pred + add_values
 
 plt.figure(1)
 # print only the normal data
-plt.scatter(x=X_test[:,0] + add_values, y=y_test +add_values)
+#plt.scatter(x=X_test[:,0] + add_values, y=y_test +add_values)
 
 #predicted values
+green_patch = mpatches.Patch(color='green', label='Valores Reais')
+plt.legend(handles=[green_patch])
+
+
 y_predt = y_pred + add_values
 
-plt.plot(X_test[:,0] + add_values, y_test +add_values, 'ro', 
-         X_test[:,0] + add_values, y_predt, 'mo')
 
+
+#legends and title
+import matplotlib.lines as mlines
+
+plt.title('Meida de tamanho do radio do Tumor')
+
+pontos_azuis = mlines.Line2D([], [], color='red', marker='o',
+                          markersize=15, label='Valores Reais')
+
+pontos_vermelhos = mlines.Line2D([], [], color='blue', marker='o',
+                          markersize=15, label='Valores classificados')
+
+plt.legend(handles=[pontos_azuis,pontos_vermelhos])
+plt.plot(X_test['radius_mean'] + add_values, y_test +add_values, 'ro', 
+         X_test['radius_mean'] + add_values, y_predt, 'bo')
 plt.show()
+#results
+print(classification_report(y_test,y_pred=y_pred))
+
+
+import matplotlib.pyplot as plt
+from matplotlib.legend_handler import HandlerLine2D
+
+line1, = plt.plot([3,2,1], marker='o', label='Line 1')
+line2, = plt.plot([1,2,3], marker='o', label='Line 2')
+
+plt.legend(handler_map={line1: HandlerLine2D(numpoints=4)})
+
 #importing colormap
