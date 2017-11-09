@@ -59,108 +59,32 @@ y_pred = classifier.predict(X_test)
 
 print(classification_report(y_test,y_pred=y_pred))
 
-plt.title('Classificacao vs Dados Reais')
-#
-pontos_verdes = mlines.Line2D([], [], color='green', marker='o',
-                          markersize=15, label='Benignos Reais')
-
-pontos_pretos = mlines.Line2D([], [], color='black', marker='o',
-                          markersize=15, label='Malignos Reais')
-
-pontos_azuis = mlines.Line2D([], [], color='blue', marker='o',
-                          markersize=15, label='Benignos Classificados')
-
-pontos_vermelhos = mlines.Line2D([], [], color='red', marker='o',
-                          markersize=15, label='Malignos classificados')
-
-plt.legend(handles=[pontos_verdes,pontos_pretos,pontos_azuis,pontos_vermelhos])
-
-#criar um space para adicionar aos beningnos e malignos e distanciar as amostras para plotagem
-
-
-
-
-
-# valores reais da amostra
-benignos_amostra = []
-malignos_amostra = []
-print_x_test_f1_benignos_amostra = []
-print_x_test_f2_benignos_amostra = []
-
-print_x_test_f1_malignos_amostra = []
-print_x_test_f2_malignos_amostra = []
-
-#Impressao dos valores classificados
-benignos = []
-malignos = []
-print_x_test_f1_benignos = []
-print_x_test_f2_benignos = []
-
-print_x_test_f1_malignos = []
-print_x_test_f2_malignos = []
-
-for i in y_test:
-    if(i == 0):
-        benignos_amostra.append(i)
-        print_x_test_f1_benignos_amostra.append(X_test['radius_mean'].values[i])
-        print_x_test_f2_benignos_amostra.append(X_test['radius_worst'].values[i])
-    else:
-        malignos_amostra.append(i)
-        print_x_test_f1_malignos_amostra.append(X_test['radius_mean'].values[i])
-        print_x_test_f2_malignos_amostra.append(X_test['radius_worst'].values[i])    
-
-for i in y_pred:
-    if(i == 0):
-        benignos.append(i)
-        print_x_test_f1_benignos.append(X_test['radius_mean'].values[i])
-        print_x_test_f2_benignos.append(X_test['radius_worst'].values[i])
-    else:
-        malignos.append(i)
-        print_x_test_f1_malignos.append(X_test['radius_mean'].values[i])
-        print_x_test_f2_malignos.append(X_test['radius_worst'].values[i])
-
-        
-benignos_add_values = np.random.random([len(benignos)])
-spaco_add_values2 = np.random.random([len(benignos)])
-
-malignos_add_values = np.random.random([len(malignos_amostra)]) * 1.5
-spaco_add_values_mal = np.random.random([len(malignos_amostra)]) * 1.5
-
-dif_benigos_amostra_classificados = len(benignos)-len(benignos_amostra)        
-print (dif_benigos_amostra_classificados)
-total_benignos = len(benignos_amostra) 
-
-
-plt.plot(print_x_test_f1_benignos_amostra + benignos_add_values[:total_benignos],
-         benignos_amostra + spaco_add_values2[:total_benignos],'go')
-
-plt.plot(print_x_test_f1_malignos_amostra + malignos_add_values, 
-         malignos_amostra + spaco_add_values_mal, 'ko')            
-
-plt.plot(print_x_test_f1_benignos + benignos_add_values[:107],
-         benignos + spaco_add_values2[:107],'bo')
-plt.plot(print_x_test_f1_malignos + malignos_add_values[:64],
-         malignos + spaco_add_values_mal[:64], 'ro')            
-
-
-index = list(range(len(X_test)))
-X_test = X_test.assign(id = index)
-
-import matplotlib.pyplot as plt
-import numpy as np
-
-cores_val_reais = {0:'g',1:'k'}
-cores_val_classificados={0:'b',1:'r'}
 
 
 # Learn about API authentication here: https://plot.ly/python/getting-started
 # Find your api_key here: https://plot.ly/settings/api
 
 
+
 import matplotlib.patches as mpatches
 
 
+# alterando valores mal classificados
+# beningnos que foram classificados como maligos -> 2
+# malignos que foram classificados como beningnos -> 3
 
+def muda_cores_mal_classificados(df_y_test,df_y_pred):  
+    y_pred_cores = y_pred
+    for i, pred in enumerate(df_y_pred['diagnosis']):
+
+        if(df_y_test['diagnosis'].values[i] == 0 and pred == 1):
+            df_y_pred['diagnosis'].values[i] = 2
+
+        if(df_y_test['diagnosis'].values[i] == 1 and pred == 0):
+            df_y_pred['diagnosis'].values[i] = 3
+
+
+marcadores = {0:'o',1:'o',2:'*',3:'*'}
 
 pontos_verdes = mlines.Line2D([], [], color='green', marker='o',
                           markersize=7, label='Benignos Reais')
@@ -174,14 +98,23 @@ pontos_azuis = mlines.Line2D([], [], color='blue', marker='o',
 pontos_vermelhos = mlines.Line2D([], [], color='red', marker='o',
                           markersize=7, label='Malignos classificados')
 
+pontos_rosas = mlines.Line2D([], [], color='fuchsia', marker='*',
+                          markersize=7, label='Benignos*')
 
+pontos_dourados = mlines.Line2D([], [], color='saddlebrown', marker='*',
+                          markersize=7, label='Malignos*')
 
+# Verde benigno
+#Preto maligno
 cores_val_reais = {0:'g',1:'k'}
-cores_val_classificados={0:'b',1:'r'}
 
+#Azul - benigno corretamente classifica
+# Vermelho - maligno corretamente classificado
+# Fuchsia - benigno incorretamente classificado (era benigno, mas foi classificado como maligno)
+# marrom - maligno incorretamente classificado (era maligno, mas foi classificado como beningno)
+cores_val_classificados={0:'b',1:'r',2:'fuchsia',3:'saddlebrown'}
 
-# Learn about API authentication here: https://plot.ly/python/getting-started
-# Find your api_key here: https://plot.ly/settings/api
+#TRATAMENTO DOS DADOS
 
 random_vals = np.random.rand(len(y_test))
 spaco = np.linspace(2,4,171)
@@ -189,15 +122,7 @@ spaco = np.linspace(2,4,171)
 df_y_test = pd.DataFrame(data=y_test)
 df_y_pred = pd.DataFrame(data=y_pred, columns=['diagnosis'])
 
-
-fig, ax = plt.subplots()
-
-labels = ['Benignos Reais', 'Malignos Reais' ,'Benignos Classificados', 'Malignos classificados' ]
-
-#fig.legend(handles=[pontos_verdes,pontos_pretos,pontos_azuis,pontos_vermelhos],labels=labels)
-
-s = 121
-
+muda_cores_mal_classificados(df_y_test,df_y_pred)
 
 x1 = X_test['radius_mean']  + random_vals
 y1 = y_test + spaco
@@ -206,11 +131,23 @@ x2 = X_test['radius_mean']  + random_vals
 y2 = y_pred + spaco
 
 
+
+
+fig, ax = plt.subplots()
+
+
+#Impressão dos valores reais
 ax.scatter(x1, y1, color=df_y_test['diagnosis'].apply(lambda x: cores_val_reais[x]),  marker='o')
 
-ax.scatter(x2, y2, color=df_y_pred['diagnosis'].apply(lambda x: cores_val_classificados[x]),  marker='o')
+
+#Impressão dos valores resultantes da classificação
+for i, val in enumerate(df_y_pred['diagnosis']):
+    if(val == 0 or val == 1):
+        ax.scatter(x2.values[i], y2[i], color=cores_val_classificados[df_y_pred['diagnosis'].values[i]],  marker='o')        
+    else:        
+        ax.scatter(x2.values[i], y2[i], color=cores_val_classificados[df_y_pred['diagnosis'].values[i]], marker='*')
 
 
 
-plt.legend(handles=[pontos_verdes,pontos_pretos,pontos_azuis,pontos_vermelhos] , bbox_to_anchor=(1.1, 1))
+plt.legend(handles=[pontos_verdes,pontos_pretos,pontos_azuis,pontos_vermelhos,pontos_rosas,pontos_dourados] , bbox_to_anchor=(1.05, 1))
 

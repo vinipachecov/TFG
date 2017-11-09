@@ -1,0 +1,9 @@
+	COISAS A FAZER
+
+	* Colocar imagem dos resultados adquiridos
+	* Imagem do resultado da SVM
+	* Imagem do resultado do tensorflow
+	* Imagem do resultado do classificador python
+
+	*Escrever conclusão
+	

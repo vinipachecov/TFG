@@ -1,0 +1,11 @@
+* Alterar a imagem do fluxograma para as dependencias atuais
+
+* Comentar no início da seção sobre as dependências do projeto
+* Comentar sobre o tensorflow e suas variáveis
+* Ver forma de comentar os dados do dataset
+* usar referências das imagems
+* Comentar sobre a versão do python 
+* Alterar imagem que mostra o dataset na implementação, mostrar dados que apresentem malignos e beningnos
+* Refernciar a imagem do workflow nas etapas do desenvolvimentos
+
+* retirar imagem duplilcada de resultados SVM - fazer referência a imagem da implementação
