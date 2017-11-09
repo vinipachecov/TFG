@@ -4,8 +4,14 @@ This repository has the code for my Final Graduation Project in my Bachelor in I
 * Need pip installed and Python 2.7
 
 install the requirements
-'''
+```
 pip install -r dependencias.txt
-'''
+```
 
-Now you can open the files and run them :)
+# Usage
+* SVM-Notebook.py  Has the training of a Support Vector Machine in Python and a couple plots
+* TFG-JUPYTER.ipynb is a Jupyter notebook with the creation steps of a deep neural network with TensorFlow
+
+
+
+
